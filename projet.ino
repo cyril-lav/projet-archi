@@ -13,21 +13,13 @@ unsigned int tempsOn = 50;
 unsigned int tempsOff = 950;
 unsigned long tempsMemo = 0;
 boolean commut = true;
-
 boolean courrier = false; // indique la présence de courrier (true si présent, false sinon)
-
-float angleServo;
-
-
-long cpt1 = 0, cpt2 = 0;
 Servo servoMoteur;
-int oui=5000;
-int non = 0;
-
 unsigned long tempsMs1;
 unsigned long tempsMs2 = 0;
 int heures;
 int minutes;
+
 
 void initHorloge(){
 	serial.println("Saisir heures (hh) : ");
