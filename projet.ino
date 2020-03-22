@@ -19,14 +19,18 @@ unsigned long tempsMs1;
 unsigned long tempsMs2 = 0;
 int heures;
 int minutes;
+LiquidCrystal lcd(12, 11, 7, 6, 5, 4);
 
 
 void initHorloge(){
-	serial.println("Saisir heures (hh) : ");
-	heures = Serial.read();
-	serial.println("Saisir minutes (mm) : ");
-	minutes = Serial.read();
+	Serial.println("Saisir heures (hh) : ");
+	//heures = Serial.read();
+	heures = 18;
+	Serial.println("Saisir minutes (mm) : ");
+	//minutes = Serial.read();
+	minutes = 40;
 }
+
 
 void initLCD() {
 	lcd.clear();
@@ -37,10 +41,10 @@ void calculHeure(){
 	tempsMs1 = millis();
 	if((tempsMs1 - tempsMs2) >= 60000){
 		tempsMs2 = tempsMs1;
-		minutes ++
+		minutes ++;
 	}
 	if(minutes >= 60){
-		heures ++
+		heures ++;
 		minutes -= 60;
 	}
 	if(heures >= 24)
@@ -79,6 +83,14 @@ void eteindreLed(){
 	digitalWrite(LED_PIN, LOW); //éteint la led
 }
 
+void afficherHeureCourante(){
+
+}
+
+void afficherHeurePassage(){
+	
+}
+
 /*
 	fonction : verifierCourrier
 	description : vérifie la présence de courrier grâce au capteur de lumière, retourne true s'il y a du courrier, false sinon
@@ -86,6 +98,7 @@ void eteindreLed(){
 boolean verifierCourrier(){
 	int valeurPhotocell = analogRead(PHOTOCELL_PIN);
 	if(valeurPhotocell < 800){
+		Serial.println("Passage : " + String(heures) + "h" + String(minutes));
 		leverFanion();
 		allumerLed();
 		return true;
@@ -101,12 +114,15 @@ void reinitialiser(){
 
 void setup(){
 	Serial.begin(9600);
+
 	pinMode(LED_PIN,OUTPUT);
 	pinMode(PHOTOCELL_PIN,INPUT);
 	pinMode(13, OUTPUT);
-	LiquidCrystal lcd(12, 11, 7, 6, 5, 4);
+
 	servoMoteur.attach(SERVO_PIN);  
+
 	attachInterrupt(BOUTON_PIN, reinitialiser, FALLING);
+
 	initHorloge();
 	initLCD();
 }
@@ -116,6 +132,7 @@ void loop(){
 	calculHeure();
 	if(!courrier)
 		courrier = verifierCourrier();
-}
+	Serial.println(String(heures) + "h" + String(minutes));
+}	
 
 
