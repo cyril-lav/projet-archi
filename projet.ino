@@ -8,6 +8,7 @@ const int LED_PIN = 2;
 const int SERVO_PIN = 9;
 const int PHOTOCELL_PIN = A0;
 const int BOUTON_PIN = 3;
+LiquidCrystal lcd(12, 11, 7, 6, 5, 4);
 
 unsigned int tempsOn = 50;
 unsigned int tempsOff = 950;
@@ -19,22 +20,40 @@ unsigned long tempsMs1;
 unsigned long tempsMs2 = 0;
 int heures;
 int minutes;
-LiquidCrystal lcd(12, 11, 7, 6, 5, 4);
+int heuresPassage;
+int minutesPassage;
 
 
 void initHorloge(){
 	Serial.println("Saisir heures (hh) : ");
-	//heures = Serial.read();
-	heures = 18;
-	Serial.println("Saisir minutes (mm) : ");
-	//minutes = Serial.read();
-	minutes = 40;
+    heures = readNumber();
+    Serial.println("Entrer minutes (mm) : ");
+    minutes = readNumber();
+    Serial.println(String(heures) + ":" + String(minutes));
 }
 
 
 void initLCD() {
 	lcd.clear();
 	lcd.begin(16,2);
+}
+
+int readNumber() {
+      String readString = "";
+  
+    while(true) {
+       while (Serial.available()) {
+            delay(3);
+            if (Serial.available() >0) {
+              char c = Serial.read();
+              readString += c;
+                }
+       } 
+      
+       if(readString != "") {
+            return readString.toInt();
+       }
+    }
 }
 
 void calculHeure(){
@@ -46,9 +65,10 @@ void calculHeure(){
 	if(minutes >= 60){
 		heures ++;
 		minutes -= 60;
+		afficherHeureCourante(); //actualise l'affichage de l'heure sur l'écran lcd chaque minute
 	}
 	if(heures >= 24)
-		heures = 0;
+		heures -= 24;
 }
 
 /*
@@ -84,11 +104,39 @@ void eteindreLed(){
 }
 
 void afficherHeureCourante(){
-
+	lcd.setCursor(0,0);
+	if(heures < 10)
+		lcd.print("0");
+	lcd.print(heures);
+	lcd.print("h");
+	if(minutes < 10)
+		lcd.print("0");
+	lcd.print(minutes);
 }
 
+
+/*
+	fonction : afficherHeurePassage
+	description : affiche sur l'écran lcd ainsi que le moniteur la dernière heure de passage
+*/
 void afficherHeurePassage(){
-	
+	lcd.setCursor(0,1);
+	lcd.print("Dernier passage : ");
+	Serial.print("Passage : ");
+	if(heures < 10){
+		lcd.print("0");
+		Serial.print("0");
+	}
+	lcd.print(heuresPassage);
+	Serial.print(heuresPassage);
+	lcd.print("h");
+	Serial.print("h");
+	if(minutes < 10){
+		lcd.print("0");
+		Serial.print("0");
+	}
+	lcd.print(minutesPassage);
+	Serial.println(minutesPassage);
 }
 
 /*
@@ -98,7 +146,9 @@ void afficherHeurePassage(){
 boolean verifierCourrier(){
 	int valeurPhotocell = analogRead(PHOTOCELL_PIN);
 	if(valeurPhotocell < 800){
-		Serial.println("Passage : " + String(heures) + "h" + String(minutes));
+		heuresPassage = heures;
+		minutesPassage = minutes;
+		afficherHeurePassage();
 		leverFanion();
 		allumerLed();
 		return true;
@@ -125,6 +175,7 @@ void setup(){
 
 	initHorloge();
 	initLCD();
+	afficherHeureCourante();
 }
 
 void loop(){
@@ -132,7 +183,5 @@ void loop(){
 	calculHeure();
 	if(!courrier)
 		courrier = verifierCourrier();
-	Serial.println(String(heures) + "h" + String(minutes));
 }	
-
 
