@@ -26,9 +26,9 @@ int minutesPassage;
 
 void initHorloge(){
 	Serial.println("Saisir heures (hh) : ");
-    heures = readNumber();
+    heures = saisieNombre();
     Serial.println("Entrer minutes (mm) : ");
-    minutes = readNumber();
+    minutes = saisieNombre();
     Serial.println(String(heures) + ":" + String(minutes));
 }
 
@@ -38,20 +38,24 @@ void initLCD() {
 	lcd.begin(16,2);
 }
 
-int readNumber() {
-      String readString = "";
-  
+
+/*
+	fonction : saisieNombre
+	description : lit une valeur saisie dans la console et la retourne en tant qu'entier
+*/
+int saisieNombre() {
+    String chaine = "";
     while(true) {
        while (Serial.available()) {
             delay(3);
             if (Serial.available() >0) {
               char c = Serial.read();
-              readString += c;
-                }
+              chaine += c;
+            }
        } 
       
-       if(readString != "") {
-            return readString.toInt();
+       if(chaine != "") {
+            return chaine.toInt();
        }
     }
 }
