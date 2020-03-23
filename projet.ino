@@ -9,13 +9,13 @@ const int SERVO_PIN = 9;
 const int PHOTOCELL_PIN = A0;
 const int BOUTON_PIN = 3;
 LiquidCrystal lcd(12, 11, 7, 6, 5, 4);
+Servo servoMoteur;
 
 unsigned int tempsOn = 50;
 unsigned int tempsOff = 950;
 unsigned long tempsMemo = 0;
 boolean commut = true;
 boolean courrier = false; // indique la présence de courrier (true si présent, false sinon)
-Servo servoMoteur;
 unsigned long tempsMs1;
 unsigned long tempsMs2 = 0;
 int heures;
