@@ -23,7 +23,10 @@ int minutes;
 int heuresPassage;
 int minutesPassage;
 
-
+/*
+	fonction : initHorloge
+	description : permet d'initialiser l'heure affiché sur l'écran à partir de la saisie sur la console
+*/
 void initHorloge(){
 	Serial.println("Saisir heures (hh) : ");
     heures = saisieNombre();
@@ -60,6 +63,11 @@ int saisieNombre() {
     }
 }
 
+
+/*
+	fonction : calculHeure
+	description : calcul l'heure en utilisant la fonction millis et actualise l'affichage chaque minute
+*/
 void calculHeure(){
 	tempsMs1 = millis();
 	if((tempsMs1 - tempsMs2) >= 60000){
@@ -107,6 +115,11 @@ void eteindreLed(){
 	digitalWrite(LED_PIN, LOW); //éteint la led
 }
 
+
+/*
+	fonction : afficherHeureCourante
+	description : affiche sur l'écran lcd l'heure actuelle
+*/
 void afficherHeureCourante(){
 	lcd.setCursor(0,0);
 	if(heures < 10)
